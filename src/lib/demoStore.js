@@ -1,7 +1,7 @@
 // Local demo store: keeps CipherStudio usable when the API host is asleep or
 // retired. Everything lives in localStorage, so a refresh keeps your edits.
 
-const KEY = 'cipherstudio_demo_v1'
+const KEY = 'cipherstudio_demo_v2'
 
 const appJs1 = `export default function App() {
   const skills = ['React', 'Next.js', 'Sandpack']
@@ -48,12 +48,14 @@ function seed() {
         name: 'Portfolio Card',
         description: 'A small React component you can edit and preview live.',
         createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString(),
       },
       {
         _id: 'demo-project-2',
         name: 'Todo List',
         description: 'State, props and events in one file.',
         createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString(),
       },
     ],
     files: {
@@ -103,6 +105,7 @@ export function demoCreateProject({ name, description }) {
     name,
     description: description || '',
     createdAt: new Date().toISOString(),
+    updatedAt: new Date().toISOString(),
   }
   state.projects.unshift(project)
   state.files[id] = [
@@ -127,10 +130,12 @@ export function demoDeleteProject(id) {
 
 export function demoUpdateFile(id, content) {
   const state = loadDemo()
-  for (const list of Object.values(state.files)) {
+  for (const [projectId, list] of Object.entries(state.files)) {
     const file = list.find((f) => f._id === id)
     if (file) {
       file.content = content
+      const project = state.projects.find((p) => p._id === projectId)
+      if (project) project.updatedAt = new Date().toISOString()
       persist(state)
       return file
     }
