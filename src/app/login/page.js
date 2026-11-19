@@ -10,6 +10,7 @@ import { Label } from '@/components/ui/label'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Code2, Sparkles, Rocket } from 'lucide-react'
 import { useToast } from '@/components/ui/use-toast'
+import { DEMO_ACCOUNT } from '@/lib/demoStore'
 
 export default function LoginPage() {
   const [email, setEmail] = useState('')
@@ -39,6 +40,21 @@ export default function LoginPage() {
       })
     }
 
+    setLoading(false)
+  }
+
+  const handleDemoLogin = async () => {
+    setLoading(true)
+    const result = await login(DEMO_ACCOUNT.email, DEMO_ACCOUNT.password)
+    if (result.success) {
+      router.push('/dashboard')
+    } else {
+      toast({
+        title: "Error",
+        description: result.message,
+        variant: "destructive",
+      })
+    }
     setLoading(false)
   }
 
@@ -127,6 +143,25 @@ export default function LoginPage() {
               <Link href="/signup" className="text-blue-400 hover:text-blue-300 font-semibold hover:underline transition-colors">
                 Sign up
               </Link>
+            </div>
+
+            <div className="mt-5 rounded-lg border border-blue-400/30 bg-blue-500/10 p-4">
+              <p className="text-sm font-medium text-white">Reviewing this project?</p>
+              <p className="mt-1 text-xs text-gray-300">
+                Skip the sign-up. The demo account opens a workspace with two editable projects —
+                no API key, no waiting on a cold server.
+              </p>
+              <Button
+                type="button"
+                onClick={handleDemoLogin}
+                disabled={loading}
+                className="mt-3 w-full bg-white/10 border border-blue-400/40 text-blue-200 hover:bg-blue-500/20"
+              >
+                Enter the demo workspace
+              </Button>
+              <p className="mt-2 text-center text-[11px] text-gray-400">
+                {DEMO_ACCOUNT.email} · {DEMO_ACCOUNT.password}
+              </p>
             </div>
           </CardContent>
         </Card>
